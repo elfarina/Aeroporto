@@ -8,7 +8,82 @@ import java.util.Date;
 /**
  * La classe DateTime rappresenta una data e ora specifica, supportando varie operazioni di manipolazione e formattazione.
  * Implementa l'interfaccia Comparable per consentire l'ordinamento delle date.
+ *
+ * <h1>Spiegazione dei metodi</h1>
+ *
+ * <div>
+ *     <h5>Costruttori</h5>
+ * </div>
+ * <p>
+ * <i>Costruttore di base</i> <b>DateTime</b>():<br>
+ * Inizializza la data con l'ora corrente.
+ * </p>
+ * <p>
+ * <i>Costruttore con timestamp</i> <b>DateTime</b>(long timestamp):<br>
+ * Inizializza la data con il timestamp specificato.
+ * </p>
+ * <p>
+ * <i>Costruttore con oggetto Date</i> <b>DateTime</b>(Date date):<br>
+ * Inizializza la data con l'oggetto Date specificato.
+ * </p>
+ * <p>
+ * <i>Metodo statico per la creazione</i> <b>create</b>(String dateString):<br>
+ * Crea un oggetto DateTime parsando una stringa di data in vari formati.
+ * </p>
+ * <p>
+ * <i>Metodo per impostare la data</i> <b>setDate</b>(String dateString):<br>
+ * Imposta solo la parte di data di questo oggetto DateTime.
+ * </p>
+ * <p>
+ * <i>Metodo per impostare il tempo</i> <b>setTime</b>(String timeString):<br>
+ * Imposta solo la parte di tempo di questo oggetto DateTime.
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere la parte di data in millisecondi</i> <b>getDateInMillis</b>():<br>
+ * Restituisce la parte di data in millisecondi dall'epoch.
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere la parte di tempo in millisecondi</i> <b>getTimeInMillis</b>():<br>
+ * Restituisce la parte di tempo in millisecondi dall'epoch.
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere la data formattata</i> <b>getDate</b>():<br>
+ * Restituisce la data in formato "yyyy-MM-dd".
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere la data formattata con un formato specificato</i> <b>getDate</b>(String format):<br>
+ * Restituisce la data nel formato specificato.
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere il tempo formattato</i> <b>getTime</b>():<br>
+ * Restituisce il tempo in formato "HH:mm:ss".
+ * </p>
+ * <p>
+ * <i>Metodo per ottenere il tempo formattato con un formato specificato</i> <b>getTime</b>(String format):<br>
+ * Restituisce il tempo nel formato specificato.
+ * </p>
+ * <p>
+ * <i>Metodo per formattare la data e il tempo</i> <b>format</b>(String format):<br>
+ * Formatta la data e il tempo in un formato specificato.
+ * </p>
+ * <p>
+ * <i>Metodo per formattare la data e il tempo con il formato di default</i> <b>formatDefault</b>():<br>
+ * Formatta la data e il tempo in un formato di default "yyyy-MM-dd HH:mm:ss".
+ * </p>
+ * <p>
+ * <i>Metodo compareTo</i> <b>compareTo</b>(DateTime other):<br>
+ * Confronta questo oggetto DateTime con un altro.
+ * </p>
+ * <p>
+ * <i>Metodo toString</i> <b>toString</b>():<br>
+ * Restituisce una stringa rappresentante questo oggetto DateTime.
+ * </p>
+ * <p>
+ * <i>Metodo principale per testare la classe DateTime</i> <b>main</b>(String[] args):<br>
+ * Metodo principale per testare la classe DateTime, che esegue una serie di test per verificare il corretto funzionamento della classe.
+ * </p>
  */
+
 public class DateTime implements Comparable<DateTime>, Serializable {
     private Date date;
     /**
@@ -174,10 +249,7 @@ public class DateTime implements Comparable<DateTime>, Serializable {
         return formatDefault();
     }
 
-    /**
-     * Metodo principale per testare la classe DateTime.
-     * @param args Argomenti della linea di comando (non utilizzati).
-     */
+    //TEST della classe
     public static void main(String[] args) {
         // Test ordinamento
         ArrayList<DateTime> list = new ArrayList<>();

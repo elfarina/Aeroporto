@@ -70,7 +70,7 @@ public class FlightTimeCalculator {
         // Restituisce un oggetto DateTime che rappresenta la durata del volo.
         return new DateTime(flightMilliseconds);
     }
-
+    //TEST
     public static void main(String[] args) {
         String airport1 = "JFK";
         String airport2 = "LHR";
