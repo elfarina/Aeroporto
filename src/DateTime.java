@@ -258,7 +258,6 @@ public class DateTime implements Comparable<DateTime>, Serializable {
         list.add(DateTime.create("24/12/2024 12:12:12"));
         list.add(DateTime.create("10/06/2023"));
         list.add(DateTime.create("15/06/2023 10:15:00"));
-
         // Stampa prima dell'ordinamento
         System.out.println("Before Sorting:");
         for (DateTime dt : list) {

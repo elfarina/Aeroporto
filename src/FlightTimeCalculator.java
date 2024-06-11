@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * La classe FlightTimeCalculator fornisce metodi per calcolare la distanza e il tempo di volo medio tra due aeroporti.
+ */
 public class FlightTimeCalculator {
 
     // Raggio della Terra in km
@@ -11,6 +14,7 @@ public class FlightTimeCalculator {
     // Mappa delle coordinate degli aeroporti
     private static final Map<String, double[]> airportCoordinates = new HashMap<>();
 
+    // Inizializzazione statica delle coordinate degli aeroporti
     static {
         airportCoordinates.put("JFK", new double[]{40.6413, -73.7781});
         airportCoordinates.put("LHR", new double[]{51.4700, -0.4543});
@@ -35,6 +39,13 @@ public class FlightTimeCalculator {
     }
 
     // Metodo per calcolare la distanza tra due aeroporti usando la formula dell'haversine
+    /**
+     * Calcola la distanza in km tra due coordinate geografiche utilizzando la formula dell'haversine.
+     *
+     * @param coord1 Le coordinate geografiche del primo aeroporto.
+     * @param coord2 Le coordinate geografiche del secondo aeroporto.
+     * @return La distanza in km tra i due aeroporti.
+     */
     public static double calculateDistance(double[] coord1, double[] coord2) {
         double lat1 = Math.toRadians(coord1[0]);
         double lon1 = Math.toRadians(coord1[1]);
@@ -54,6 +65,14 @@ public class FlightTimeCalculator {
     }
 
     // Metodo per calcolare il tempo di volo medio tra due aeroporti
+    /**
+     * Calcola il tempo di volo medio in formato DateTime tra due aeroporti utilizzando la velocità di volo media.
+     *
+     * @param airportCode1 Il codice dell'aeroporto di partenza.
+     * @param airportCode2 Il codice dell'aeroporto di arrivo.
+     * @return Un oggetto DateTime che rappresenta la durata del volo medio.
+     * @throws IllegalArgumentException se viene fornito un codice aeroportuale non valido.
+     */
     public static DateTime calculateFlightTime(String airportCode1, String airportCode2) {
         double[] coord1 = airportCoordinates.get(airportCode1);
         double[] coord2 = airportCoordinates.get(airportCode2);
@@ -70,7 +89,8 @@ public class FlightTimeCalculator {
         // Restituisce un oggetto DateTime che rappresenta la durata del volo.
         return new DateTime(flightMilliseconds);
     }
-    //TEST
+
+    // Metodo per eseguire un test di calcolo del tempo di volo medio
     public static void main(String[] args) {
         String airport1 = "JFK";
         String airport2 = "LHR";
