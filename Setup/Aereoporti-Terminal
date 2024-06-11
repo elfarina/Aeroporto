@@ -1,0 +1,42 @@
+IATA,TerminalName,type,Gates{...}
+JFK,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9}
+JFK,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10}
+LHR,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11 A12}
+LHR,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11 B12}
+CDG,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+CDG,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+FRA,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+FRA,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+DXB,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+DXB,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+HND,Terminal1,National,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+HND,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+LAX,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+LAX,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+SIN,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+SIN,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+PEK,Terminal1,National,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+PEK,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+AMS,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+AMS,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+SYD,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+SYD,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+YYZ,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+YYZ,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+MUC,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+MUC,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+ICN,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+ICN,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+IST,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+IST,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+DEN,Terminal1,National,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+DEN,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+MAD,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+MAD,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+SFO,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+SFO,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+HKG,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+HKG,Terminal2,International,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+ORD,Terminal1,International,gates{A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11}
+ORD,Terminal2,National,gates{B1 B2 B3 B4 B5 B6 B7 B8 B9 B10 B11}
+
