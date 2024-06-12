@@ -249,6 +249,63 @@ public class DateTime implements Comparable<DateTime>, Serializable {
         return formatDefault();
     }
 
+    /**
+     * Aggiungi tempo a questo oggetto DateTime.
+     * @param seconds Il numero di secondi da aggiungere.
+     */
+    public void add(int seconds) {
+        add(seconds, 0, 0, 0);
+    }
+
+    /**
+     * Aggiungi tempo a questo oggetto DateTime.
+     * @param seconds Il numero di secondi da aggiungere.
+     * @param minutes Il numero di minuti da aggiungere.
+     */
+    public void add(int seconds, int minutes) {
+        add(seconds, minutes, 0, 0);
+    }
+
+    /**
+     * Aggiungi tempo a questo oggetto DateTime.
+     * @param seconds Il numero di secondi da aggiungere.
+     * @param minutes Il numero di minuti da aggiungere.
+     * @param hours Il numero di ore da aggiungere.
+     */
+    public void add(int seconds, int minutes, int hours) {
+        add(seconds, minutes, hours, 0);
+    }
+
+    /**
+     * Aggiungi tempo a questo oggetto DateTime.
+     * @param seconds Il numero di secondi da aggiungere.
+     * @param minutes Il numero di minuti da aggiungere.
+     * @param hours Il numero di ore da aggiungere.
+     * @param days Il numero di giorni da aggiungere.
+     */
+    public void add(int seconds, int minutes, int hours, int days) {
+        long totalMilliseconds = seconds * 1000L
+                + minutes * 60L * 1000L
+                + hours * 60L * 60L * 1000L
+                + days * 24L * 60L * 60L * 1000L;
+        this.date = new Date(this.date.getTime() + totalMilliseconds);
+    }
+
+    /**
+     * Aggiungi una data specifica a questo oggetto DateTime.
+     * @param dateString La stringa della data da aggiungere.
+     */
+    public void add(String dateString) {
+        DateTime other = DateTime.create(dateString);
+        this.date = new Date(this.date.getTime() + other.date.getTime());
+    }
+    /**
+     * Aggiungi un altro oggetto DateTime a questo oggetto DateTime.
+     * @param other L'altro oggetto DateTime da sommare.
+     */
+    public void add(DateTime other) {
+        this.date = new Date(this.date.getTime() + other.date.getTime());
+    }
     //TEST della classe
     public static void main(String[] args) {
         // Test ordinamento
