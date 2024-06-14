@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Map;
  * La classe Volo utilizza la classe DateTime per gestire le date e gli orari dei voli. Questo consente di sfruttare le funzionalità avanzate di manipolazione e formattazione delle date offerte da DateTime, semplificando il codice e migliorando la leggibilità. Ad esempio, il metodo DateTime.create(String) permette di creare facilmente un oggetto DateTime a partire da una stringa di data, gestendo vari formati.
  * </p>
  */
-public class Volo {
+public class Volo implements Serializable {
     private DateTime departureTime;
     private DateTime arrivalTime;
     private String departureIATA;
@@ -156,5 +157,12 @@ public class Volo {
 
     public void setPassengers(int passengers) {
         this.passengers = passengers;
+    }
+    @Override
+    public String toString(){
+        String tmp = departureIATA + " ["+departureTime+"]\t";
+        tmp += arrivalIATA + " ["+arrivalTime+"]\t";
+        tmp += "("+ passengers + "\\" + capacity +")";
+        return tmp;
     }
 }

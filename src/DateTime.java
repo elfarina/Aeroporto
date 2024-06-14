@@ -309,24 +309,24 @@ public class DateTime implements Comparable<DateTime>, Serializable {
     //TEST della classe
     public static void main(String[] args) {
         // Test ordinamento
-        ArrayList<DateTime> list = new ArrayList<>();
-        list.add(new DateTime());
-        list.add(DateTime.create("20/12/2024"));
-        list.add(DateTime.create("24/12/2024 12:12:12"));
-        list.add(DateTime.create("10/06/2023"));
-        list.add(DateTime.create("15/06/2023 10:15:00"));
+        ArrayList<DateTime> dateList = new ArrayList<>();
+        dateList.add(new DateTime());
+        dateList.add(DateTime.create("20/12/2024"));
+        dateList.add(DateTime.create("24/12/2024 12:12:12"));
+        dateList.add(DateTime.create("10/06/2023"));
+        dateList.add(DateTime.create("15/06/2023 10:15:00"));
         // Stampa prima dell'ordinamento
         System.out.println("Before Sorting:");
-        for (DateTime dt : list) {
+        for (DateTime dt : dateList) {
             System.out.println(dt);
         }
 
         // Ordinamento della lista
-        Collections.sort(list);
+        Collections.sort(dateList);
 
         // Stampa dopo l'ordinamento
         System.out.println("\nAfter Sorting:");
-        for (DateTime dt : list) {
+        for (DateTime dt : dateList) {
             System.out.println(dt);
         }
 

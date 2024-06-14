@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +83,7 @@ import java.util.List;
  * Restituisce una stringa che rappresenta il terminal con il nome, il tipo e l'elenco dei gate associati.
  * </p>
  **/
-public class Terminal {
+public class Terminal implements Serializable {
     // Variabili di istanza
     private String name; // Nome del terminal
     /**
@@ -178,6 +179,23 @@ public class Terminal {
     }
 
     /**
+     * rimpiazza un gate partendo dal suo ID
+     * @param g il rimpiazzo del gate
+     */
+    public void replaceGate(Gate g) {
+        for(Gate gate: gates) if(gate.getGateId().equals(g.getGateId())) gate = g;
+    }
+
+    /**
+     * funzione per estrarre l'indice del gate
+     *
+     * @param gate da cui estrarre l'indice
+     * @return l'indice del gate
+     */
+    public int indexOfGate(Gate gate) {
+        return gates.indexOf(gate);
+    }
+    /**
      * Imposta la lista dei gate associati al terminal.
      *
      * @param gates La lista dei gate da impostare.
@@ -222,6 +240,15 @@ public class Terminal {
      */
     public boolean contains(String gateId) {
         for (Gate gate : gates) if (gate.getGateId().equals(gateId)) return true;
+        return false;
+    }
+
+    /**
+     * controlla se tutti i terminal sono occupati
+     * @return true se il terminal ha tutti i gate occupati
+     */
+    public boolean isAllOccuped(){
+        for(Gate gate : gates) if(!gate.isOccuped()) return true;
         return false;
     }
 

@@ -1,11 +1,11 @@
 IATA, country, city
-JFK,United States,NewYork
+JFK,United States,New York
 LHR,United Kingdom,London
 CDG,France,Paris
 FRA,Germany,Frankfurt
 DXB,United Arab Emirates,Dubai
 HND,Japan,Tokyo
-LAX,United States,LosAngeles
+LAX,United States,Los Angeles
 SIN,Singapore,Singapore
 PEK,China,Beijing
 AMS,Netherlands,Amsterdam
@@ -16,6 +16,6 @@ ICN,SouthKorea,Seoul
 IST,Turkey,Istanbul
 DEN,United States,Denver
 MAD,Spain,Madrid
-SFO,United States,SanFrancisco
-HKG,Hong Kong,HongKong
+SFO,United States,San Francisco
+HKG,Hong Kong,Hong Kong
 ORD,United States,Chicago

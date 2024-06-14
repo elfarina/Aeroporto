@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -23,12 +21,6 @@ import java.util.*;
  * <div>
  *     <h5>Variabili di istanza</h5>
  * </div>
- * <p>
- *     <b>br</b>: BufferedReader per la lettura dei file di setup.
- * </p>
- * <p>
- *     <b>fr</b>: FileReader per la lettura dei file di setup.
- * </p>
  * <p>
  *     <b>IATA</b>: Codice IATA dell'aeroporto.
  * </p>
@@ -99,22 +91,18 @@ import java.util.*;
  *     <b>main</b>(String[] args): Metodo principale per testare la classe Aereoporto.
  * </p>
  */
-
-public class Aereoporto implements Iterable<Volo>, Serializable {
+public class Aereoporto extends Thread implements Iterable<Volo>, Serializable{
 
     // Costanti per i file di setup degli aeroporti, terminal e gate
     public static final String AEREOPORTI_SETUP_FILE = "Setup/Aereoporti";
     public static final String TERMINAL_SETUP_FILE = "Setup/Aereoporti-Terminal";
     public static final String GATES_SETUP_FILE = "Setup/Aereoporti-Terminal-Gates";
+    public static final String SERIAL_FILE = "Setup/appState.ser";
 
-    // BufferedReader e FileReader per la lettura dei file di setup
-    private BufferedReader br;
-    private FileReader fr;
-
-    // Variabili statiche per i dettagli dell'aeroporto
-    private static String IATA;
-    private static String country;
-    private static String city;
+    // Variabili  per i dettagli dell'aeroporto
+    private String IATA;
+    private String country;
+    private String city;
 
     // Lista di terminal associati all'aeroporto
     private ArrayList<Terminal> terminals;
@@ -128,6 +116,23 @@ public class Aereoporto implements Iterable<Volo>, Serializable {
     public Aereoporto() {
         terminals = new ArrayList<>();
         flyMap = new HashMap<>();
+    }
+
+    /**
+     * Costruttore che si inizializza da solo prendendo i dati dal file di Setup
+     * Utilizzo i thread per la gestione concorrente dei dati dal file
+     * @param IATA, il nome dell'aereoporto, essendo univoco lo cerca dal file e usa la funzione loadSetup().
+     */
+    public Aereoporto(String IATA){
+        terminals = new ArrayList<>();
+        this.flyMap = new HashMap<>();
+        this.IATA = IATA;
+        try{
+            this.start();
+            this.join();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -212,42 +217,76 @@ public class Aereoporto implements Iterable<Volo>, Serializable {
     }
 
     /**
+     * Funzione che carica lo stato dell'oggetto dal file seriale.
+     * @return L'oggetto Aereoporto deserializzato.
+     */
+    public static Aereoporto deserialize() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SERIAL_FILE))) {
+            return (Aereoporto) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Funzione che salva lo stato dell'oggetto sul file seriale.
+     */
+    public void serialize() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SERIAL_FILE))) {
+            oos.writeObject(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Utilizzo un Thread per la gestione concorrente dei dati dal file
+     */
+    @Override
+    public void run(){
+        try {
+            loadAereoporto();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Carica i dati di setup dell'aeroporto dai file di configurazione.
      * @throws Exception Se si verifica un errore durante la lettura dei file.
      */
-    public void loadSetup() throws Exception {
-        br = new BufferedReader(new FileReader(AEREOPORTI_SETUP_FILE));
-        String line;
-        br.readLine(); // Salto la prima riga (info sulla struttura)
+    private void loadAereoporto() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(AEREOPORTI_SETUP_FILE));
+        String line = br.readLine();
         String[] data;
-        // Carico gli aeroporti dal file
-        while((line = br.readLine()) != null) {
+        while((line = br.readLine()) != null){
             data = line.split(",");
-            if(this.IATA.equals(data[0])) {
-                // Leggo i dati e li assegno alle variabili dell'aeroporto poi posso esplorare i terminal
+            if(getIATA().equals(data[0])){
+                setIATA(data[0]);
                 setCountry(data[1]);
                 setCity(data[2]);
-                System.out.println(Arrays.toString(data));
-                break;
+                loadTerminals();
+                return;
             }
         }
-        br.close();
-
-        br = new BufferedReader(new FileReader(TERMINAL_SETUP_FILE));
-        br.readLine(); // Salto la prima riga (info sulla struttura)
-        // Carico i terminal dal file e i rispettivi gate
-        while((line = br.readLine()) != null) {
+        System.out.println(this.toString());
+    }
+    private void loadTerminals() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(TERMINAL_SETUP_FILE));
+        String line; br.readLine();
+        String[] data;
+        while((line = br.readLine()) != null){
             data = line.split(",");
-            if(this.IATA.equals(data[0]) && !containsTerminal(data[1])) {
+            if(getIATA().equals(data[0]) && !containsTerminal(data[1])) {
                 String tmp = data[3].replace("gates{", "");
                 tmp = tmp.replace("}", "");
                 List<String> gatesName = Arrays.asList(tmp.split(" "));
                 this.terminals.add(new Terminal(data[1], data[2], gatesName));
             }
         }
-        // TODO creare la mappa dei terminal, leggendo dal file GATES_SETUP_FILE
+        br.close();
     }
-
     /**
      * Verifica se l'aeroporto contiene un terminal specifico.
      * @param terminalName Il nome del terminal da verificare.
@@ -291,6 +330,62 @@ public class Aereoporto implements Iterable<Volo>, Serializable {
         return getTerminals().contains(terminal);
     }
 
+    //TODO commentare
+    public void addVolo(Volo volo, Terminal t){
+        //TODO logica, controlla che il gate sia libero altrimenti non aggiungere
+        Gate g = getRandomGate(t);
+        g.isOccuped(true);
+        t.replaceGate(g);
+        replaceTerminal(t);
+        flyMap.put(volo, g);
+    }
+    public void addVolo(Volo volo, Terminal.TerminalType type){
+        Terminal t = getRandomTerminal(type);
+        Gate g = getRandomGate(t);
+        g.isOccuped(true);
+        t.replaceGate(g);
+        replaceTerminal(t);
+        flyMap.put(volo, g);
+    }
+    //TODO commentare
+    public boolean removeVolo(Volo volo){
+        //TODO logica, rendere il gate libero e rimuovere il volo
+        Gate g = flyMap.get(volo);
+        g.isOccuped(false);
+        Terminal t = findTerminalByVolo(volo);
+        t.replaceGate(g);
+        replaceTerminal(t);
+        flyMap.remove(volo);
+        return false;
+    }
+    //TODO commentare
+    public Terminal findTerminalByVolo(Volo volo){
+        Gate g = flyMap.get(volo);
+        for(Terminal t : terminals){if(t.contains(g.getGateId())) return t;}
+        return null;
+    }
+    //TODO aggiungere una funzione per restituire un gate libero, param nazionale / internzionale o il terminal stesso
+    public Terminal getRandomTerminal(Terminal.TerminalType type){
+        if(getTerminals().size() == 1) return getTerminals().get(0);
+        if(getTerminals().size() == 2 && getTerminals().get(0).getTerminalType() == type) return getTerminals().get(0);
+        else if(getTerminals().size() == 2) return getTerminals().get(1);
+        ArrayList<Terminal> tmpTerm = getTerminals();
+        for(Terminal t : getTerminals()) if(t.getTerminalType().equals(type)) tmpTerm.add(t);
+        return tmpTerm.get(new Random().nextInt(0, tmpTerm.size()));
+    }
+    public Gate getRandomGate(Terminal terminal){
+//        if(terminal.isAllOccuped()) return null;
+        Gate g = terminal.getGates().get(new Random().nextInt(0, (terminal.getGates().size()-1)));
+        if(g.isOccuped()) return getRandomGate(terminal);
+        return g;
+    }
+
+
+    public void replaceTerminal(Terminal newTerminal){
+        for(Terminal t : terminals) if(t.getName().equals(newTerminal.getName())) t = newTerminal;
+    }
+
+
     /**
      * Restituisce una rappresentazione sotto forma di stringa dell'aeroporto.
      * @return Una stringa rappresentante l'aeroporto.
@@ -299,6 +394,7 @@ public class Aereoporto implements Iterable<Volo>, Serializable {
     public String toString() {
         String tmp = "[" + IATA + " - " + country + " - " + city + "]\n";
         for(Terminal t : terminals) tmp = tmp + t.toString() + "\n";
+        if(!flyMap.isEmpty()) for(Volo v : flyMap.keySet()) tmp = tmp + v.toString() + " - Gate: " + flyMap.get(v).getGateId() + "\n";
         return tmp;
     }
 
@@ -306,14 +402,36 @@ public class Aereoporto implements Iterable<Volo>, Serializable {
      * Metodo principale per testare la classe Aereoporto.
      * @param args Argomenti della linea di comando (non utilizzati).
      */
-    public static void main(String[] args) {
-        Aereoporto a = new Aereoporto();
-        a.setIATA("JFK");
-        try {
-            a.loadSetup();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(a.toString());
+    public static void main(String[] args) throws IOException, InterruptedException {
+        // Creazione di un oggetto Aereoporto di esempio
+        Aereoporto a = new Aereoporto("JFK");
+        Aereoporto b = new Aereoporto("SYD");
+        Aereoporto c = new Aereoporto("FRA");
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+//        Aereoporto aeroporto1 = new Aereoporto("JFK", "United States", "New York");
+//        aeroporto1.addTerminal(new Terminal("T1", "Terminal 1", Arrays.asList("G1", "G2", "G3")));
+//        aeroporto1.addTerminal(new Terminal("T2", "Terminal 2", Arrays.asList("G4", "G5", "G6")));
+//
+//        // Serializzazione dell'oggetto aeroporto1
+//        aeroporto1.serialize();
+//
+//        // Deserializzazione in un nuovo oggetto
+//        Aereoporto aeroporto2 = Aereoporto.deserialize();
+//
+//        // Confronto degli oggetti
+//        System.out.println("Originale:");
+//        System.out.println(aeroporto1);
+//
+//        System.out.println("Deserializzato:");
+//        System.out.println(aeroporto2);
+//
+//        // Verifica che i dati degli oggetti siano identici
+//        if (aeroporto1.toString().equals(aeroporto2.toString())) {
+//            System.out.println("La serializzazione e deserializzazione hanno avuto successo!");
+//        } else {
+//            System.out.println("Qualcosa è andato storto con la serializzazione/deserializzazione.");
+//        }
     }
 }
