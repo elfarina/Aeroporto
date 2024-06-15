@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * La classe DateTime rappresenta una data e ora specifica, supportando varie operazioni di manipolazione e formattazione.
@@ -117,20 +118,28 @@ public class DateTime implements Comparable<DateTime>, Serializable {
      * @throws IllegalArgumentException se la stringa non può essere parsata.
      */
     public static DateTime create(String dateString) {
-
         String[] formats = {
                 "yyyy-MM-dd HH:mm:ss",
                 "yyyy-MM-dd",
                 "dd/MM/yyyy HH:mm:ss",
-                "dd/MM/yyyy"
+                "dd/MM/yyyy",
+                "HH:mm:ss" // nuovo formato aggiunto
         };
         for (String format : formats) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
                 Date parsedDate = sdf.parse(dateString);
+
+                // Se il formato è "HH:mm:ss", impostiamo la data corrente
+                if (format.equals("HH:mm:ss")) {
+                    DateTime currentDateTime = new DateTime();
+                    currentDateTime.setTime(dateString);
+                    return currentDateTime;
+                }
+
                 return new DateTime(parsedDate);
             } catch (ParseException ignored) {
-                //ignora e vai avanti, l'IllegalArgument verrà restituito poi
+                // Ignora e continua, l'IllegalArgumentException sarà lanciato alla fine
             }
         }
         throw new IllegalArgumentException("Unparseable date: " + dateString);
@@ -299,6 +308,7 @@ public class DateTime implements Comparable<DateTime>, Serializable {
         DateTime other = DateTime.create(dateString);
         this.date = new Date(this.date.getTime() + other.date.getTime());
     }
+
     /**
      * Aggiungi un altro oggetto DateTime a questo oggetto DateTime.
      * @param other L'altro oggetto DateTime da sommare.

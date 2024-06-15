@@ -1,7 +1,6 @@
 import java.util.*;
-import java.io.*;
 
-public class Simulatore extends Thread {
+public class SimulatoreGlobale extends Thread {
     public ArrayList<Aereoporto> globalAirports;
     public static final int INITIAL_FLIGHT_AMMOUNT = 100;
     private static final String SETUP_FILE = "Setup/Aereoporti";
@@ -12,7 +11,7 @@ public class Simulatore extends Thread {
     private ArrayList<Volo> globalFlights;
     private ArrayList<Volo> Flights;
 
-    public Simulatore() throws Exception {
+    public SimulatoreGlobale() throws Exception {
         this.globalAirports = new ArrayList<>();
         this.Flights = new ArrayList<>();
         this.globalFlights = new ArrayList<>();
@@ -61,15 +60,18 @@ public class Simulatore extends Thread {
     }
 
     public static void main(String[] args) throws Exception {
-        Simulatore simulatore = new Simulatore();
+        SimulatoreGlobale simulatore = new SimulatoreGlobale();
         for(Aereoporto a : simulatore.getGlobalAirports()) System.out.println(a);
-
-
         System.out.println("\nStampo gli arrivi al JFK\n");
-        System.out.println(simulatore.getArrivals(simulatore.getAereoportoByIATA("JFK")));
-
-
-
-
+        for(Volo v : simulatore.getArrivals(simulatore.getAereoportoByIATA("JFK"))) System.out.println(v);
+        /**
+         * sarebbe da approfondire e magari implementare la logica per la gestione del tempo, gestire con dei thread
+         * i vari voli anche con dei timer ma sarebbe troppo espansivo in termini di tempistiche.
+         * Generare troppi voli genera un errore di StackOverflow perche questi non vengono eliminati e riempiono
+         * la memoria in maniera eccessiva. Limito questa classe a generare un tot di aereoporti dal file di setup
+         * e generare randomicamente dei voli che vengono poi associati agli aereoporti, ai rispettivi terminal
+         * (nazionali o internazionali intelligentemente) e ai rispettivi gate.
+         *
+          */
     }
 }
