@@ -100,7 +100,7 @@ public class FlightsGenerator {
         do {
             arrIndex = r.nextInt(0, airportsIATA.length);
         } while (depIndex == arrIndex);
-        DateTime Arrival = Departure;
+        DateTime Arrival = new DateTime(Departure);
         Arrival.add(FlightTimeCalculator.calculateFlightTime(airportsIATA[depIndex], airportsIATA[arrIndex]));
         return new Volo(Departure, Arrival, airportsIATA[depIndex], airportsIATA[arrIndex], capacity, passengers);
     }
@@ -131,7 +131,7 @@ public class FlightsGenerator {
         Departure.add(0, Minutes, Hours, Days);
         int capacity = r.nextInt(3, 9) * 50;
         int passengers = r.nextInt(capacity / 15, capacity);
-        DateTime Arrival = Departure;
+        DateTime Arrival = new DateTime(Departure);
         Arrival.add(FlightTimeCalculator.calculateFlightTime(airportsIATA[depIndex], airportsIATA[arrIndex]));
         return new Volo(Departure, Arrival, airportsIATA[depIndex], airportsIATA[arrIndex], capacity, passengers);
     }
@@ -155,7 +155,7 @@ public class FlightsGenerator {
         Departure.add(0, Minutes, Hours, Days);
         int capacity = r.nextInt(3, 9) * 50;
         int passengers = r.nextInt(capacity / 15, capacity);
-        DateTime Arrival = Departure;
+        DateTime Arrival = new DateTime(Departure);
         Arrival.add(FlightTimeCalculator.calculateFlightTime(departureIATA, arrivalIATA));
         return new Volo(Departure, Arrival, departureIATA, arrivalIATA, capacity, passengers);
     }
@@ -174,9 +174,48 @@ public class FlightsGenerator {
         if (!isAnAirport(arrivalIATA)) return generateOnce(departureIATA);
         int capacity = new Random().nextInt(3, 9) * 50;
         int passengers = new Random().nextInt(capacity / 15, capacity);
-        DateTime Arrival = Departure;
+        DateTime Arrival = new DateTime(Departure);
         Arrival.add(FlightTimeCalculator.calculateFlightTime(departureIATA, arrivalIATA));
         return new Volo(Departure, Arrival, departureIATA, arrivalIATA, capacity, passengers);
+    }
+    public Volo generateArrival(String arrivalIATA){
+        Random r = new Random();
+        int depIndex = 0;
+        for (int i = 0; i < airportsIATA.length; i++)
+            if (airportsIATA[i].equals(arrivalIATA)) {
+                depIndex = i;
+                break;
+            }
+        int arrIndex;
+        do {
+            arrIndex = r.nextInt(0, airportsIATA.length);
+        } while (arrIndex == depIndex);
+        return generateOnce(airportsIATA[arrIndex], arrivalIATA);
+    }
+
+    public Volo generateOnce(String departureIATA, DateTime Departure){
+        if(!isAnAirport(departureIATA)) return generateOnce();
+        Random r = new Random();
+        int depIndex = 0;
+        for (int i = 0; i < airportsIATA.length; i++)
+            if (airportsIATA[i].equals(departureIATA)) {
+                depIndex = i;
+                break;
+            }
+        int arrIndex;
+        do {
+            arrIndex = r.nextInt(0, airportsIATA.length);
+        } while (arrIndex == depIndex);
+        return generateOnce(departureIATA, airportsIATA[arrIndex], Departure);
+    }
+    public Volo generateOnceAfter(String departureIATA, DateTime Departure){
+        DateTime tmp = Departure;
+        int seconds = new Random().nextInt(0,60);
+        int minutes = new Random().nextInt(0,60);
+        int hours = new Random().nextInt(0,24);
+        int days = new Random().nextInt(0,31);
+        tmp.add(seconds, minutes, hours, days);
+        return generateOnce(departureIATA, tmp);
     }
 
     /**
@@ -202,6 +241,12 @@ public class FlightsGenerator {
         ArrayList<Volo> flights = new ArrayList<>();
         for (int i = 0; i < amount; i++) flights.add(generateOnce(departureIATA));
         return flights;
+    }
+    public static void main(String[] args){
+        DateTime x = new DateTime();
+        System.out.println(x);
+        Volo v = new FlightsGenerator().generateOnce("JFK", x);
+        System.out.println(v);
     }
 }
 

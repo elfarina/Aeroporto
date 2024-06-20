@@ -64,7 +64,7 @@ import java.util.*;
  *     <b>iterator</b>(): Metodo per ottenere un iteratore sui voli.
  * </p>
  * <p>
- *     <b>loadSetup</b>(): Carica i dati di setup dell'aeroporto dai file di configurazione.
+ *     <b>ask_loadSetup</b>(): Carica i dati di setup dell'aeroporto dai file di configurazione.
  * </p>
  * <p>
  *     <b>containsTerminal</b>(String terminalName): Verifica se l'aeroporto contiene un terminal specifico.
@@ -91,12 +91,11 @@ import java.util.*;
  *     <b>main</b>(String[] args): Metodo principale per testare la classe Aereoporto.
  * </p>
  */
-public class Aereoporto extends Thread implements Iterable<Volo>, Serializable{
+public class Aereoporto implements Serializable{
 
     // Costanti per i file di setup degli aeroporti, terminal e gate
     public static final String AEREOPORTI_SETUP_FILE = "Setup/Aereoporti";
     public static final String TERMINAL_SETUP_FILE = "Setup/Aereoporti-Terminal";
-    public static final String GATES_SETUP_FILE = "Setup/Aereoporti-Terminal-Gates";
     public static final String SERIAL_FILE = "Setup/appState.ser";
 
     // Variabili  per i dettagli dell'aeroporto
@@ -108,54 +107,23 @@ public class Aereoporto extends Thread implements Iterable<Volo>, Serializable{
     private ArrayList<Terminal> terminals;
 
     // Mappa dei voli associati ai gate
-    private Map<Volo, Gate> flyMap;
+    private Map<String, Volo> flyMap; //GateID - Volo
 
-    /**
-     * Costruttore di default che inizializza la lista dei terminal e la mappa dei voli.
-     */
+
     public Aereoporto() {
         terminals = new ArrayList<>();
         flyMap = new HashMap<>();
     }
 
-    /**
-     * Costruttore che si inizializza da solo prendendo i dati dal file di Setup
-     * Utilizzo i thread per la gestione concorrente dei dati dal file
-     * @param IATA, il nome dell'aereoporto, essendo univoco lo cerca dal file e usa la funzione loadSetup().
-     */
     public Aereoporto(String IATA){
         terminals = new ArrayList<>();
         this.flyMap = new HashMap<>();
         this.IATA = IATA;
         try{
-            this.start();
-            this.join();
+            loadAereoporto();
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Costruttore con parametri per inizializzare i dettagli dell'aeroporto.
-     * @param IATA Il codice IATA dell'aeroporto.
-     * @param nation Il paese in cui si trova l'aeroporto.
-     * @param city La città in cui si trova l'aeroporto.
-     */
-    public Aereoporto(String IATA, String nation, String city) {
-        this.IATA = IATA;
-        this.country = nation;
-        this.city = city;
-        terminals = new ArrayList<>();
-        flyMap = new HashMap<>();
-    }
-
-    /**
-     * Associa un volo ad un gate.
-     * @param volo Il volo da associare.
-     * @param gate Il gate da associare.
-     */
-    public void associaVoloGate(Volo volo, Gate gate) {
-        flyMap.put(volo, gate);
     }
 
     // Metodi getter e setter per le variabili dell'aeroporto
@@ -191,72 +159,11 @@ public class Aereoporto extends Thread implements Iterable<Volo>, Serializable{
         this.terminals = terminals;
     }
 
-    public Map<Volo, Gate> getFlyMap() {
+    public Map<String, Volo> getFlyMap() {
         return flyMap;
     }
 
-    public void setFlyMap(Map<Volo, Gate> Voli) {
-        this.flyMap = Voli;
-    }
-
-    /**
-     * Aggiunge un terminal alla lista dei terminal dell'aeroporto.
-     * @param terminal Il terminal da aggiungere.
-     */
-    public void addTerminal(Terminal terminal) {
-        terminals.add(terminal);
-    }
-
-    /**
-     * Metodo per ottenere un iteratore sui voli.
-     * @return Un iteratore sui voli.
-     */
-    @Override
-    public Iterator<Volo> iterator() {
-        return this.flyMap.keySet().iterator();
-    }
-
-    /**
-     * Funzione che carica lo stato dell'oggetto dal file seriale.
-     * @return L'oggetto Aereoporto deserializzato.
-     */
-    public static Aereoporto deserialize() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SERIAL_FILE))) {
-            return (Aereoporto) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Funzione che salva lo stato dell'oggetto sul file seriale.
-     */
-    public void serialize() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SERIAL_FILE))) {
-            oos.writeObject(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Utilizzo un Thread per la gestione concorrente dei dati dal file
-     */
-    @Override
-    public void run(){
-        try {
-            loadAereoporto();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Carica i dati di setup dell'aeroporto dai file di configurazione.
-     * @throws Exception Se si verifica un errore durante la lettura dei file.
-     */
-    private void loadAereoporto() throws IOException {
+    public void loadAereoporto() throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(AEREOPORTI_SETUP_FILE));
         String line = br.readLine();
         String[] data;
@@ -287,151 +194,149 @@ public class Aereoporto extends Thread implements Iterable<Volo>, Serializable{
         }
         br.close();
     }
-    /**
-     * Verifica se l'aeroporto contiene un terminal specifico.
-     * @param terminalName Il nome del terminal da verificare.
-     * @return true se il terminal esiste, false altrimenti.
-     */
     public boolean containsTerminal(String terminalName) {
         Iterator<Terminal> it = terminals.iterator();
         while(it.hasNext()) if(it.next().getName().equals(terminalName)) return true;
         return false;
     }
-
-    /**
-     * Restituisce il terminal con il nome specificato.
-     * @param terminalName Il nome del terminal da restituire.
-     * @return Il terminal trovato, o null se non esiste.
-     */
-    public Terminal getTerminal(String terminalName) {
-        Iterator<Terminal> it = terminals.iterator();
-        while(it.hasNext()) {
-            Terminal t = it.next();
-            if(t.getName().equals(terminalName)) return t;
+    public Terminal getTerminalByName(String terminalName) {
+        for (Terminal t : terminals) {
+            if (t.getName().equals(terminalName)) return t;
         }
         return null;
     }
 
-    /**
-     * Restituisce l'indice del terminal con il nome specificato.
-     * @param terminalName Il nome del terminal.
-     * @return L'indice del terminal, o -1 se non esiste.
-     */
-    public int getTerminalIndex(String terminalName) {
-        return getTerminals().indexOf(getTerminal(terminalName));
+    public boolean isFull(){
+        for(Terminal t : terminals){
+            for(Gate g : t.getGates()){
+                if(!g.isOccuped()) return false;
+            }
+        }
+        return true;
     }
-
-    /**
-     * Verifica se l'aeroporto contiene un terminal specifico.
-     * @param terminal Il terminal da verificare.
-     * @return true se il terminal esiste, false altrimenti.
-     */
-    public boolean containsTerminal(Terminal terminal) {
-        return getTerminals().contains(terminal);
+    public boolean addVolo(Volo v){
+        if(isFull()){
+            System.err.println("L'aereoporto è pieno");
+            return false;
+        }
+        try{
+            Gate g = getFirstGate();
+            g.isOccuped(true);
+            getTerminalByGate(g).replaceGate(g);
+            flyMap.put(g.getGateId(), v);
+            return true;
+        }catch(Exception ignored){
+            System.err.println(ignored.getMessage());
+        } return false;
     }
-
-    //TODO commentare
-    public void addVolo(Volo volo, Terminal t){
-        //TODO logica, controlla che il gate sia libero altrimenti non aggiungere
-        Gate g = getRandomGate(t);
-        g.isOccuped(true);
-        t.replaceGate(g);
-        replaceTerminal(t);
-        flyMap.put(volo, g);
-    }
-    public void addVolo(Volo volo, Terminal.TerminalType type){
-        Terminal t = getRandomTerminal(type);
-        Gate g = getRandomGate(t);
-        g.isOccuped(true);
-        t.replaceGate(g);
-        replaceTerminal(t);
-        flyMap.put(volo, g);
-    }
-    //TODO commentare
-    public boolean removeVolo(Volo volo){
-        //TODO logica, rendere il gate libero e rimuovere il volo
-        Gate g = flyMap.get(volo);
-        g.isOccuped(false);
-        Terminal t = findTerminalByVolo(volo);
-        t.replaceGate(g);
-        replaceTerminal(t);
-        flyMap.remove(volo);
+//    public synchronized boolean removeVolo(Volo v){
+//        for(Terminal t : terminals){
+//            for(Gate g : t.getGates()){
+//                try{
+//                    if(flyMap.get(g.getGateId()).equals(v)) {
+//                        flyMap.remove(g.getGateId());
+//                        return true;
+//                    }
+//                }catch(Exception ignored){
+//                    System.err.println("Impossibile rimuovere il volo" + v);
+//                }
+//            }
+//        }
+//        return false;
+//    }
+    public synchronized boolean removeVolo(Volo v) {
+        synchronized (flyMap) {
+            for (Terminal t : terminals) {
+                for (Gate g : t.getGates()) {
+                    if (flyMap.containsKey(g.getGateId()) && flyMap.get(g.getGateId()).equals(v)) {
+                        try {
+                            g.isOccuped(false);  // Libera il gate
+                            flyMap.replace(g.getGateId(), null);  // Rimuove il volo dalla mappa
+                            return true;
+                        } catch (Exception e) {
+                            System.err.println("Impossibile rimuovere il volo " + v + " dal gate " + g.getGateId() + ": " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
-    //TODO commentare
-    public Terminal findTerminalByVolo(Volo volo){
-        Gate g = flyMap.get(volo);
-        for(Terminal t : terminals){if(t.contains(g.getGateId())) return t;}
-        return null;
-    }
-    //TODO aggiungere una funzione per restituire un gate libero, param nazionale / internzionale o il terminal stesso
-    public Terminal getRandomTerminal(Terminal.TerminalType type){
-        if(getTerminals().size() == 1) return getTerminals().get(0);
-        if(getTerminals().size() == 2 && getTerminals().get(0).getTerminalType() == type) return getTerminals().get(0);
-        else if(getTerminals().size() == 2) return getTerminals().get(1);
-        ArrayList<Terminal> tmpTerm = getTerminals();
-        for(Terminal t : getTerminals()) if(t.getTerminalType().equals(type)) tmpTerm.add(t);
-        return tmpTerm.get(new Random().nextInt(0, tmpTerm.size()));
-    }
-    public Gate getRandomGate(Terminal terminal){
-//        if(terminal.isAllOccuped()) return null;
-        Gate g = terminal.getGates().get(new Random().nextInt(0, (terminal.getGates().size()-1)));
-        if(g.isOccuped()) return getRandomGate(terminal);
-        return g;
-    }
 
 
-    public void replaceTerminal(Terminal newTerminal){
-        for(Terminal t : terminals) if(t.getName().equals(newTerminal.getName())) t = newTerminal;
+
+    public Gate getFirstGate() throws Exception{
+        for(Terminal t : getTerminals()){ try{ return getFirstGate(t); } catch (Exception ignored) { } }
+        throw new Exception("Non esistono gate liberi per l'aereoporto " + getIATA());
     }
-
-
-    /**
-     * Restituisce una rappresentazione sotto forma di stringa dell'aeroporto.
-     * @return Una stringa rappresentante l'aeroporto.
-     */
+    public Gate getFirstGate(Terminal t)throws Exception {
+        for(Gate g : t.getGates()) if(!g.isOccuped()) return g;
+        throw new Exception ("Tutti i Gate del Terminal "+ t.getName() + " sono occupati");
+    }
+    public Terminal getTerminalByGate(Gate g) throws Exception{
+        for(Terminal t : getTerminals()) if(t.contains(g.getGateId())) return t;
+        throw new Exception("Il gate " + g.getGateId() + " non esiste nell'aereoporto " + this.getIATA());
+    }
+    public Terminal getTerminalByGate(String GateID) throws Exception{
+        for(Terminal t : getTerminals()) if(t.contains(GateID)) return t;
+        throw new Exception("Il gate " + GateID + " non esiste nell'aereoporto " + this.getIATA());
+    }
     @Override
     public String toString() {
-        String tmp = "[" + IATA + " - " + country + " - " + city + "]\n";
-        for(Terminal t : terminals) tmp = tmp + t.toString() + "\n";
-        if(!flyMap.isEmpty()) for(Volo v : flyMap.keySet()) tmp = tmp + v.toString() + " - Gate: " + flyMap.get(v).getGateId() + "\n";
-        return tmp;
+        StringBuilder tmp = new StringBuilder("[" + IATA + " - " + country + " - " + city + "]\n");
+        for(Terminal t : terminals) tmp.append(t.toString()).append("\n");
+        if(!flyMap.isEmpty()) for(String gateId : flyMap.keySet()) tmp.append(flyMap.get(gateId).toString()).append(" - Gate: ").append(gateId).append("\n");
+        return tmp.toString();
+    }
+    public boolean contains(Terminal t){
+        for(Terminal x : getTerminals()) if(x.equals(t)) return true;
+        return false;
+    }
+    public boolean contains(Gate g){
+        for(Terminal t : getTerminals()) if(t.contains(g.getGateId())) return true;
+        return false;
     }
 
     /**
-     * Metodo principale per testare la classe Aereoporto.
-     * @param args Argomenti della linea di comando (non utilizzati).
+     * Rimuove i voli dai gate partendo da una data, se i voli hanno una data di Partenza (departureDate) precedente al DateTime in parametro vengono eliminati dalla flyMap
+     * @param dateTime La data prima della quale verranno elimiati tutti i voli
+     * @return true se è stato trovato e rimosso, false altrimenti.
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
-        // Creazione di un oggetto Aereoporto di esempio
-        Aereoporto a = new Aereoporto("JFK");
-        Aereoporto b = new Aereoporto("SYD");
-        Aereoporto c = new Aereoporto("FRA");
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(c);
-//        Aereoporto aeroporto1 = new Aereoporto("JFK", "United States", "New York");
-//        aeroporto1.addTerminal(new Terminal("T1", "Terminal 1", Arrays.asList("G1", "G2", "G3")));
-//        aeroporto1.addTerminal(new Terminal("T2", "Terminal 2", Arrays.asList("G4", "G5", "G6")));
-//
-//        // Serializzazione dell'oggetto aeroporto1
-//        aeroporto1.serialize();
-//
-//        // Deserializzazione in un nuovo oggetto
-//        Aereoporto aeroporto2 = Aereoporto.deserialize();
-//
-//        // Confronto degli oggetti
-//        System.out.println("Originale:");
-//        System.out.println(aeroporto1);
-//
-//        System.out.println("Deserializzato:");
-//        System.out.println(aeroporto2);
-//
-//        // Verifica che i dati degli oggetti siano identici
-//        if (aeroporto1.toString().equals(aeroporto2.toString())) {
-//            System.out.println("La serializzazione e deserializzazione hanno avuto successo!");
-//        } else {
-//            System.out.println("Qualcosa è andato storto con la serializzazione/deserializzazione.");
-//        }
+    public synchronized void clearFlights(DateTime dateTime) {
+        synchronized (flyMap) {
+            Iterator<Map.Entry<String, Volo>> iterator = flyMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Volo> entry = iterator.next();
+                Volo v = entry.getValue();
+                System.out.println("Controllo: " + v);
+                try {
+                    if (v.getDepartureTime().compareTo(dateTime) <= 0 || v.getArrivalTime().compareTo(dateTime) <= 0) {
+                        if (removeVolo(v)) {
+                            System.err.println("Rimosso " + v.toString());
+                            iterator.remove(); // Rimuove l'elemento dall'iteratore e dalla mappa
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Errore durante la rimozione del volo: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
     }
+
+    public static void main(String[] args){
+        Aereoporto a = new Aereoporto("JFK");
+        System.out.println(a);
+        Volo v = new FlightsGenerator().generateOnce("JFK");
+        a.addVolo(v);
+        a.addVolo(new FlightsGenerator().generateArrival("JFK"));
+        a.addVolo(new FlightsGenerator().generateArrival("JFK"));
+        a.addVolo(new FlightsGenerator().generateOnce("JFK"));
+        a.addVolo(new FlightsGenerator().generateOnce("JFK"));
+        System.out.println(a);
+        a.clearFlights(DateTime.create("2024-08-0 00:00:00"));
+        System.out.println(a);
+    }
+
 }

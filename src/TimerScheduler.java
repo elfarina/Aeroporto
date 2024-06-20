@@ -15,6 +15,8 @@ public class TimerScheduler extends Thread {
     private int incrementDays;
     private int reloadingMs = 1000;
     private final static int DEFAULT_RELOADING_MS = 1000;
+    private boolean paused = false; // flag per gestire la pausa
+    private boolean printing = true;
 
     /**
      * Costruttore per la classe TimerScheduler.
@@ -49,11 +51,18 @@ public class TimerScheduler extends Thread {
      */
     public void start(long intervalMillis) {
         scheduler.scheduleAtFixedRate(() -> {
-            dateTime.add(incrementSeconds, incrementMinutes, incrementHours, incrementDays);
-            System.out.println(dateTime);
+            if (!paused) { // controlla il flag paused
+                dateTime.add(incrementSeconds, incrementMinutes, incrementHours, incrementDays);
+                if(isPrinting())System.out.println(dateTime);
+            }
         }, 0, intervalMillis, TimeUnit.MILLISECONDS);
     }
-
+    public boolean isPrinting(){
+        return printing;
+    }
+    public void isPrinting(boolean printing){
+        this.printing = printing;
+    }
     /**
      * Ferma il timer.
      */
@@ -61,15 +70,45 @@ public class TimerScheduler extends Thread {
         scheduler.shutdown();
     }
 
+    /**
+     * Mette in pausa il timer.
+     */
+    public boolean isPaused(){
+        return this.paused;
+    }
+    public void isPaused(boolean paused){
+        this.paused = paused;
+    }
+
+    /**
+     * Riprende il timer se è in pausa.
+     */
+    public void resumeTimer() {
+        paused = false;
+    }
+
+    /**
+     * Avanza il timer di un numero specificato di intervalli di aggiornamento.
+     * @param intervals Il numero di intervalli di aggiornamento da avanzare.
+     */
+    public void advanceByIntervals(int intervals) {
+        // Calcola il totale del tempo da avanzare
+        int totalSeconds = incrementSeconds * intervals;
+        int totalMinutes = incrementMinutes * intervals;
+        int totalHours = incrementHours * intervals;
+        int totalDays = incrementDays * intervals;
+
+        // Aggiungi il tempo calcolato al dateTime
+        dateTime.add(totalSeconds, totalMinutes, totalHours, totalDays);
+    }
 
     /**
      * default start
      */
     @Override
-    public void run(){
+    public void run() {
         this.start(this.reloadingMs);
     }
-
 
     //setter-getter
     public synchronized DateTime getDateTime() {
@@ -94,8 +133,6 @@ public class TimerScheduler extends Thread {
         this.reloadingMs = reloadingMs;
     }
 
-
-
     /**
      * Metodo principale per testare la classe TimerScheduler.
      */
@@ -108,5 +145,21 @@ public class TimerScheduler extends Thread {
         // Avviamo il timer
         timerScheduler.start();
 
+        // Pausa e ripresa del timer
+        try {
+            Thread.sleep(5000); // Aspetta 5 secondi
+            timerScheduler.isPaused(true);
+            System.out.println("Timer in pausa...");
+
+            // Avanza il timer di 3 intervalli di aggiornamento
+            timerScheduler.advanceByIntervals(3);
+            System.out.println("Timer avanzato di 3 intervalli...");
+
+            Thread.sleep(5000); // Aspetta altri 5 secondi
+            timerScheduler.resumeTimer();
+            System.out.println("Timer ripreso...");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

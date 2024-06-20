@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -164,5 +167,20 @@ public class Volo implements Serializable {
         tmp += arrivalIATA + " ["+arrivalTime+"]\t";
         tmp += "("+ passengers + "\\" + capacity +")";
         return tmp;
+    }
+    public Terminal.TerminalType getTerminalType() {
+        Map<String, String>flyTerminal = new HashMap<>();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(Aereoporto.AEREOPORTI_SETUP_FILE));
+            String line;
+            while((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                flyTerminal.put(data[0], data[1]);
+            }
+            if(flyTerminal.get(this.departureIATA).equals(flyTerminal.get(this.arrivalIATA))) return Terminal.TerminalType.NATIONAL;
+            else return Terminal.TerminalType.INTERNATIONAL;
+        }catch(Exception ignored){
+        }
+        return Terminal.TerminalType.INTERNATIONAL;
     }
 }

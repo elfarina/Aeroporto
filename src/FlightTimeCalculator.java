@@ -97,5 +97,15 @@ public class FlightTimeCalculator {
 
         DateTime flightTime = calculateFlightTime(airport1, airport2);
         System.out.printf("The average flight time between %s and %s is %s hours.%n", airport1, airport2, flightTime.format("HH:mm:ss"));
+
+        // Example of adding two flight times
+        DateTime totalFlightTime = calculateFlightTime(airport1, airport2);
+        totalFlightTime.add(flightTime);
+        System.out.printf("Total flight time for two flights between %s and %s is %s hours.%n", airport1, airport2, totalFlightTime.format("HH:mm:ss"));
+        DateTime x = new DateTime();
+        System.out.println(x);
+        x.add(flightTime);
+        System.out.println(x);
+
     }
 }

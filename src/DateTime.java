@@ -102,13 +102,16 @@ public class DateTime implements Comparable<DateTime>, Serializable {
     public DateTime(long timestamp) {
         this.date = new Date(timestamp);
     }
-
     /**
      * Costruttore che inizializza la data con un oggetto Date specifico.
      * @param date L'oggetto Date per inizializzare il DateTime.
      */
     public DateTime(Date date) {
         this.date = date;
+    }
+
+    public DateTime(DateTime departure) {
+        this.date = departure.date;
     }
 
     /**
@@ -316,6 +319,7 @@ public class DateTime implements Comparable<DateTime>, Serializable {
     public void add(DateTime other) {
         this.date = new Date(this.date.getTime() + other.date.getTime());
     }
+
     //TEST della classe
     public static void main(String[] args) {
         // Test ordinamento

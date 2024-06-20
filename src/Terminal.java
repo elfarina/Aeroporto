@@ -300,8 +300,22 @@ public class Terminal implements Serializable {
     public String toString() {
         String tmp = "Terminal: " + this.name + " (" + this.terminalType.toString() + ") {";
         for (Gate gate : gates) {
-            tmp += " " + gate.getGateId() + " ";
+            tmp += " " + gate.toString() + " ";
         }
         return tmp + "};";
+    }
+
+    public int getGateIndex(Gate gate) {
+        return gates.indexOf(gate);
+    }
+    public int getGateIndex(String gateId){
+        for(Gate g : getGates()) if(g.getGateId().equals(gateId)) return getGates().indexOf(g);
+        return -1;
+    }
+    public void setGateStatus(Gate g, boolean occuped){
+        getGates().get(getGateIndex(g)).isOccuped(occuped);
+    }
+    public void setGateStatus(String gateId, boolean occuped){
+        getGates().get(getGateIndex(gateId)).isOccuped(occuped);
     }
 }
