@@ -46,7 +46,6 @@ import java.util.*;
  *     <b>generateMultiple</b>(int amount, String departureIATA): Genera più voli casuali con partenza da un aeroporto specificato.
  * </p>
  */
-
 public class FlightsGenerator {
     public String[] airportsIATA;
 
@@ -178,6 +177,13 @@ public class FlightsGenerator {
         Arrival.add(FlightTimeCalculator.calculateFlightTime(departureIATA, arrivalIATA));
         return new Volo(Departure, Arrival, departureIATA, arrivalIATA, capacity, passengers);
     }
+
+    /**
+     * Genera un volo casuale con arrivo specificato.
+     *
+     * @param arrivalIATA Codice IATA dell'aeroporto di arrivo.
+     * @return Un oggetto Volo generato casualmente.
+     */
     public Volo generateArrival(String arrivalIATA){
         Random r = new Random();
         int depIndex = 0;
@@ -194,6 +200,13 @@ public class FlightsGenerator {
         return generateOnce(airportsIATA[arrIndex], arrivalIATA);
     }
 
+    /**
+     * Genera un volo casuale con partenza specificata e orario di partenza specificato.
+     *
+     * @param departureIATA Codice IATA dell'aeroporto di partenza.
+     * @param Departure Orario di partenza specificato.
+     * @return Un oggetto Volo generato casualmente.
+     */
     public Volo generateOnce(String departureIATA, DateTime Departure){
         if(!isAnAirport(departureIATA)) return generateOnce();
         Random r = new Random();
@@ -209,6 +222,14 @@ public class FlightsGenerator {
         } while (arrIndex == depIndex);
         return generateOnce(departureIATA, airportsIATA[arrIndex], Departure);
     }
+
+    /**
+     * Genera un volo casuale con partenza specificata e orario di partenza dopo un certo intervallo casuale.
+     *
+     * @param departureIATA Codice IATA dell'aeroporto di partenza.
+     * @param Departure Orario di partenza iniziale.
+     * @return Un oggetto Volo generato casualmente.
+     */
     public Volo generateOnceAfter(String departureIATA, DateTime Departure){
         DateTime tmp = Departure;
         int seconds = new Random().nextInt(0,60);
@@ -243,6 +264,12 @@ public class FlightsGenerator {
         for (int i = 0; i < amount; i++) flights.add(generateOnce(departureIATA));
         return flights;
     }
+
+    /**
+     * Metodo principale per testare la generazione dei voli.
+     *
+     * @param args Argomenti della riga di comando.
+     */
     public static void main(String[] args){
         DateTime x = new DateTime();
         System.out.println(x);
@@ -250,4 +277,3 @@ public class FlightsGenerator {
         System.out.println(v);
     }
 }
-
