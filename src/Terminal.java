@@ -305,6 +305,7 @@ public class Terminal implements Serializable {
         return tmp + "};";
     }
 
+
     public int getGateIndex(Gate gate) {
         return gates.indexOf(gate);
     }

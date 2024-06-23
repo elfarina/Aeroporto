@@ -84,7 +84,6 @@ import java.util.Locale;
  * Metodo principale per testare la classe DateTime, che esegue una serie di test per verificare il corretto funzionamento della classe.
  * </p>
  */
-
 public class DateTime implements Comparable<DateTime>, Serializable {
     private Date date;
     /**

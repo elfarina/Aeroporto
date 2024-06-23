@@ -194,6 +194,7 @@ public class Aereoporto implements Serializable{
         }
         br.close();
     }
+
     public boolean containsTerminal(String terminalName) {
         Iterator<Terminal> it = terminals.iterator();
         while(it.hasNext()) if(it.next().getName().equals(terminalName)) return true;

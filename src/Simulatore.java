@@ -139,6 +139,7 @@ public class Simulatore extends Thread {
                             }
                             getSelf().clearFlights(getClock().getDateTime());
                         }
+
                         Thread.sleep(2000);
                     }
                 }catch(Exception e){

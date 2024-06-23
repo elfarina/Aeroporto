@@ -186,6 +186,7 @@ public class FlightsGenerator {
                 depIndex = i;
                 break;
             }
+
         int arrIndex;
         do {
             arrIndex = r.nextInt(0, airportsIATA.length);

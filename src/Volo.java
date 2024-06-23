@@ -183,4 +183,5 @@ public class Volo implements Serializable {
         }
         return Terminal.TerminalType.INTERNATIONAL;
     }
+
 }

@@ -90,6 +90,7 @@ public class FlightTimeCalculator {
         return new DateTime(flightMilliseconds);
     }
 
+
     // Metodo per eseguire un test di calcolo del tempo di volo medio
     public static void main(String[] args) {
         String airport1 = "JFK";

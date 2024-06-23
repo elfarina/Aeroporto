@@ -12,6 +12,7 @@ public class Gate implements Serializable {
     public boolean isOccuped() {
         return occuped;
     }
+
     public void isOccuped(boolean o) {
         this.occuped = o;
     }

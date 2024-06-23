@@ -57,6 +57,7 @@ public class TimerScheduler extends Thread {
             }
         }, 0, intervalMillis, TimeUnit.MILLISECONDS);
     }
+
     public boolean isPrinting(){
         return printing;
     }
